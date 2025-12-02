@@ -1,0 +1,80 @@
+# Archivos de entorno (CRÍTICO)
+.env
+*.env
+.env.local
+.env.production
+.env.staging
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Laravel
+admin-laravel/vendor/
+admin-laravel/storage/logs/
+admin-laravel/storage/framework/cache/
+admin-laravel/storage/framework/sessions/
+admin-laravel/storage/framework/testing/
+admin-laravel/storage/framework/views/
+admin-laravel/bootstrap/cache/*.php
+admin-laravel/.env
+admin-laravel/.env.backup
+admin-laravel/.phpunit.result.cache
+admin-laravel/Homestead.json
+admin-laravel/Homestead.yaml
+admin-laravel/auth.json
+
+# React/Next.js
+cliente-web/build/
+cliente-web/.env
+cliente-web/.env.local
+cliente-web/.env.production.local
+admin-web/build/
+admin-web/.env
+admin-desktop/build/
+admin-desktop/.env
+
+# Electron
+admin-desktop/dist/
+admin-desktop/out/
+
+# Bases de datos
+*.sqlite
+*.db
+database.sqlite
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+[Tt]humbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos de imagen grandes (opcional)
+# *.jpg
+# *.png
+# *.gif 

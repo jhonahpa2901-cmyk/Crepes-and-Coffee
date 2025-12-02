@@ -1,0 +1,75 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo, phar, tokenizer, xml, zip
+        coverage: none
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: cliente-web/package-lock.json
+        
+    - name: Install PHP Dependencies
+      run: |
+        cd admin-laravel
+        composer install --prefer-dist --no-interaction
+        
+    - name: Install Node.js Dependencies
+      run: |
+        cd cliente-web
+        npm ci
+        
+    - name: Run PHP Tests
+      run: |
+        cd admin-laravel
+        php artisan test
+        
+    - name: Run Frontend Tests
+      run: |
+        cd cliente-web
+        npm test -- --watchAll=false
+        
+    - name: Build Frontend
+      run: |
+        cd cliente-web
+        npm run build
+
+  deploy-backend:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deploy Backend to Render
+      run: |
+        echo "Backend deployment would happen here"
+        # Add your Render deployment logic here
+        
+  deploy-frontend:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deploy Frontend to Vercel
+      run: |
+        echo "Frontend deployment would happen here"
+        # Add your Vercel deployment logic here 

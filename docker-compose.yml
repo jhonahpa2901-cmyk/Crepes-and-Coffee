@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: crepes_coffee_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: crepes_coffee
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: crepes_user
+      MYSQL_PASSWORD: crepes_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - crepes_network
+
+  # Laravel Backend
+  backend:
+    build:
+      context: ./admin-laravel
+      dockerfile: Dockerfile
+    container_name: crepes_coffee_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=crepes_coffee
+      - DB_USERNAME=root
+      - DB_PASSWORD=123456
+    volumes:
+      - ./admin-laravel:/var/www/html
+      - ./admin-laravel/storage:/var/www/html/storage
+    depends_on:
+      - mysql
+    networks:
+      - crepes_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./cliente-web
+      dockerfile: Dockerfile
+    container_name: crepes_coffee_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+    volumes:
+      - ./cliente-web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - crepes_network
+
+  # phpMyAdmin (Optional)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: crepes_coffee_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=123456
+    depends_on:
+      - mysql
+    networks:
+      - crepes_network
+
+volumes:
+  mysql_data:
+
+networks:
+  crepes_network:
+    driver: bridge 
