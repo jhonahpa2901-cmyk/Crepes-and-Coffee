@@ -49,3 +49,20 @@ Route::get('/run-migrations', function () {
     }
 });
 
+Route::get('/list-tables', function () {
+    try {
+        $tables = \DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name");
+        
+        $output = '<h1>Tablas en la Base de Datos</h1>';
+        $output .= '<p>Total: ' . count($tables) . '</p>';
+        $output .= '<ul>';
+        foreach ($tables as $table) {
+            $output .= '<li>' . $table->table_name . '</li>';
+        }
+        $output .= '</ul>';
+        
+        return $output;
+    } catch (\Exception $e) {
+        return '<h1 style="color:red">Error</h1><pre>' . $e->getMessage() . '</pre>';
+    }
+});
