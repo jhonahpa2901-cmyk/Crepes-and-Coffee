@@ -9,13 +9,32 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\AdminController;
 
-// Ruta de prueba para verificar CORS
 Route::get('/test', function () {
     return response()->json([
         'message' => 'CORS test successful',
         'timestamp' => now(),
         'status' => 'working'
     ]);
+});
+
+// Debug endpoint para ver errores de productos
+Route::get('/debug-productos', function () {
+    try {
+        $productos = \App\Models\Producto::all();
+        return response()->json([
+            'status' => 'success',
+            'count' => $productos->count(),
+            'productos' => $productos
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
 });
 
 // Ruta POST simple para probar
